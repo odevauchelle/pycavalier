@@ -32,3 +32,4 @@ viewpoint.plot_points( circle, '--', lw = 3 )
 axis('equal')
 show()
 ```
+![Blue circle](./examples/circle.svg)

@@ -24,4 +24,5 @@ circle = center + array( [ radius*cos(theta), radius*sin(theta), 0.*theta ] ).T
 viewpoint.plot_points( circle, '--', lw = 3 )
 
 axis('equal')
+savefig('circle.svg', bbox_inches = 'tight')
 show()
