@@ -20,4 +20,6 @@ for side in sides :
     viewpoint.plot_patch( side, color = 'tab:brown', edgecolor = 'black' )
 
 axis('equal')
+savefig('box.svg', bbox_inches = 'tight')
+
 show()
