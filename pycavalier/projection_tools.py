@@ -43,8 +43,24 @@ default_reference_frame = { 'center' : np.array( [ 0, 0, 0 ] ),
     }
 
 class viewpoint :
+    '''
+    A projection frame, oriented with respect to the viewer.
+    '''
 
     def __init__( self, latitude, longitude, plummet = ( 0, 0, -1. ), reference_frame = default_reference_frame ) :
+        '''
+        Create a projection frame.
+
+        Parameters
+        ----------
+        latitude : float
+            Orientation of the viewer with respect to vertical.
+        longitude : float
+            Orientation of the viewer around z-axis.
+        plummet : tuple of length 3, optional
+            Defines the vertical direction.
+        reference_frame : Frame dictionary, optional
+        '''
 
         self.latitude = latitude
         self.longitude = longitude
@@ -106,8 +122,16 @@ class viewpoint :
             self.plot_points( [subspace.origin, subspace.origin + n ], color = color )
 
 class subspace_2D :
-
+    '''
+    A 2D plane in 3D space.
+    '''
     def __init__( self, points ) :
+        '''
+        Parameters
+        ----------
+        points: list of three points
+            These points define the plane. Only the three first elements of the list are used.
+        '''
 
         self.origin = points[1]
 
@@ -124,10 +148,32 @@ class subspace_2D :
 
 
     def import_points( self, points ) :
+        '''
+        Projects 3D points onto the 2D subspace.
+
+        Parameters
+        ----------
+        points: list of points belonging to the 3D space
+
+        Returns
+        ----------
+        List of projected points
+        '''
 
         return np.array( map( lambda point: projector( point - self.origin, *( self.base ) ), points ) )
 
     def export_points( self, points ) :
+        '''
+        Converts points in the subspace to points of the 3D space.
+
+        Parameters
+        ----------
+        points: list of points belonging to the subspace
+
+        Returns
+        ----------
+        List of corresponding points in the 3D space.
+        '''
 
         return np.array( map( lambda point: self.origin + self.base[0]*point[0] + self.base[1]*point[1], points ) )
 
