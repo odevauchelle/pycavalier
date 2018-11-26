@@ -31,6 +31,8 @@ import matplotlib.pyplot as matplotlib_pyplot
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 
+from random_points_in_polygon import random_points_in_polygon
+
 def projector( point, n_X, n_Y ) :
     return np.array( [ np.dot( point, n_X ), np.dot( point, n_Y ) ] )
 
