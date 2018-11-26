@@ -60,7 +60,7 @@ show()
 ```
 ![Brown box](./examples/box.svg)
 
-## Tilt the reference Frame
+## Tilt the reference frame
 
 ```Python
 from pycavalier import projection_tools as pt
