@@ -36,9 +36,6 @@ show()
 
 ## Patches
 ```python
-from sys import path as sys_path
-sys_path.append('./../')
-
 from pycavalier import projection_tools as pt
 from pylab import *
 
@@ -91,6 +88,5 @@ for tilt_angle in tilt_angles :
 
 axis('equal')
 show()
-
 ```
 ![Tilted frame](./examples/tilt.svg)
