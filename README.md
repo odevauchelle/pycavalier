@@ -1,10 +1,10 @@
 # Pycavalier
 
-Pycavalier is a Python library to draw 3D objects using an oblique projection.
+Pycavalier is a Python library to draw 3D objects using an oblique projection with Matplotlib.
 
-It is based on Matplotlib. In fact, it is just some tools added to Matplolib.
+The orientation of the projection is with respect to the observer, and the vertical direction is kept track of.
 
-## Quick example:
+## Quick example
 
 ```python
 from pycavalier import projection_tools as pt
@@ -34,7 +34,7 @@ show()
 ```
 ![Blue circle](./examples/circle.svg)
 
-## Patches:
+## Patches
 ```python
 from sys import path as sys_path
 sys_path.append('./../')
@@ -62,3 +62,35 @@ axis('equal')
 show()
 ```
 ![Brown box](./examples/box.svg)
+
+## Tilt the reference Frame
+
+```Python
+from pycavalier import projection_tools as pt
+from pylab import *
+
+# define the vertical direction
+
+tilt_angles = [ 0, -pi/8, -pi/4 ]
+
+for tilt_angle in tilt_angles :
+
+    # create viewpoint with tilt
+
+    viewpoint = pt.viewpoint( latitude = 0.9*pi/2., longitude = pi/10., plummet = [ 0,-sin(tilt_angle), -cos(tilt_angle) ] )
+
+    # translate reference frame
+
+    viewpoint.reference_frame['center'] = viewpoint.reference_frame['center'] + array( [-6, 0, 0] )
+
+    # show refrence frame and plummet
+
+    viewpoint.show_reference_frame()
+    viewpoint.show_plummet()
+
+
+axis('equal')
+show()
+
+```
+![Tilted frame](./examples/tilt.svg)
