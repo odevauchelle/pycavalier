@@ -21,7 +21,7 @@ circle = center + array( [ radius*cos(theta), radius*sin(theta), 0.*theta ] ).T
 
 # show disk
 
-viewpoint.plot_points( circle, '--', lw = 3 )
+viewpoint.plot_points( circle, '--', color = 'tab:green', lw = 3 )
 
 axis('equal')
 savefig('circle.svg', bbox_inches = 'tight')
