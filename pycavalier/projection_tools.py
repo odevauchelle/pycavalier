@@ -104,12 +104,12 @@ class viewpoint :
         matplotlib_pyplot.text( *tuple( self.project_on_screen( point ) ), s = message, **kwargs )
 
 
-    def show_reference_frame( self, color = 'black', axes_names = { 'x':'x', 'y':'y', 'y':'y' }, with_arrows = False, **kwargs ) :
+    def show_reference_frame( self, color = 'black', axes_names = { 'x':'x', 'y':'y', 'z':'z' }, with_arrows = False, **kwargs ) :
 
         for xyz in self.reference_frame['direction'] :
 
             self.plot_points( np.array( [ self.reference_frame['center'], self.reference_frame['center'] + self.reference_frame['direction'][ xyz ] ] ), color = color, **kwargs )
-            self.text(  self.reference_frame['center'] + 1.4*self.reference_frame['direction'][ xyz ], xyz, color = color, ha = 'center', va = 'center' )
+            self.text(  self.reference_frame['center'] + 1.4*self.reference_frame['direction'][ xyz ], axes_names[xyz], color = color, ha = 'center', va = 'center' )
 
     def show_plummet( self, color = 'lightgrey' ) :
 
@@ -245,7 +245,7 @@ if __name__ == '__main__':
     #
     #####################
 
-    vp.show_reference_frame()
+    vp.show_reference_frame( )
 
     #####################
     #
