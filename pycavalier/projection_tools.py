@@ -226,6 +226,8 @@ def length_arrow(vp, points, bar_shift, label, va = 'center', ha = 'center', rel
 
     vp.text( np.mean( points, axis = 0 ) + relative_text_pos*bar_shift, label, color = color, va = va, ha = ha )
 
+def translate( list_of_points, vector ) :
+    return map( lambda x: array(x) + vector, list_of_points )
 
 #####################
 #
@@ -234,6 +236,8 @@ def length_arrow(vp, points, bar_shift, label, va = 'center', ha = 'center', rel
 #####################
 
 if __name__ == '__main__':
+
+    from pylab import *
 
     latitude = 0.8*np.pi/2.; longitude = -.1*np.pi/2
 
@@ -265,6 +269,7 @@ if __name__ == '__main__':
     projected_barycenter = np.mean( projected_square, axis = 0 )
 
     vp.plot_points( the_square, 'o', color = 'C1' )
+    vp.plot_points( translate( the_square, array([0,-.5,0]) ), 'o', color = 'C4'  )
     vp.plot_patch( the_square, color = 'C2', alpha = .1 )
 
     vp.plot_points( ref_square.export_points( [ projected_barycenter ] ), 'tab:red', marker = '+'  )
