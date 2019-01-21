@@ -227,7 +227,7 @@ def length_arrow(vp, points, bar_shift, label, va = 'center', ha = 'center', rel
     vp.text( np.mean( points, axis = 0 ) + relative_text_pos*bar_shift, label, color = color, va = va, ha = ha )
 
 def translate( list_of_points, vector ) :
-    return map( lambda x: array(x) + vector, list_of_points )
+    return map( lambda x: np.array(x) + vector, list_of_points )
 
 #####################
 #
