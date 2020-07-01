@@ -11,7 +11,7 @@ viewpoint.show_reference_frame()
 
 # create sandy wavy bed
 
-x = linspace( 0, 6*pi, 100 )
+x = linspace( 0, 4*pi, 100 )
 z = -.5*cos(x)
 points = array( [ x, 0*x, z ] ).T
 width = array([0, 3, 0])

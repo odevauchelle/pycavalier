@@ -31,7 +31,11 @@ import matplotlib.pyplot as matplotlib_pyplot
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 
-from .random_points_in_polygon import random_points_in_polygon
+if __name__ == '__main__' :
+    from random_points_in_polygon import random_points_in_polygon
+else :
+    from .random_points_in_polygon import random_points_in_polygon
+
 
 def projector( point, n_X, n_Y ) :
     return np.array( [ np.dot( point, n_X ), np.dot( point, n_Y ) ] )
@@ -49,7 +53,7 @@ class viewpoint :
     A projection frame, oriented with respect to the viewer.
     '''
 
-    def __init__( self, latitude, longitude, plummet = ( 0, 0, -1. ), reference_frame = default_reference_frame ) :
+    def __init__( self, latitude, longitude, plummet = ( 0, 0, -1 ), reference_frame = default_reference_frame ) :
         '''
         Create a projection frame.
 
@@ -87,34 +91,71 @@ class viewpoint :
 
             return projector( points, self.n_X, self.n_Y )
 
-    def plot_points( self, points, *args, **kwargs ) :
+    def plot_points( self, points, *args, ax = None, **kwargs ) :
+
+        if ax is None :
+            ax = matplotlib_pyplot.gca()
 
         x, y = tuple( self.project_on_screen( points ).T )
 
-        matplotlib_pyplot.plot( x, y, *args, **kwargs )
+        ax.plot( x, y, *args, **kwargs )
 
 
-    def plot_patch( self, points, *args, **kwargs ) :
+    def plot_patch( self, points, *args, ax = None, **kwargs ) :
 
-        matplotlib_pyplot.gca().add_collection( PatchCollection( [ Polygon( self.project_on_screen( points ) ) ], *args, **kwargs ) )
+        if ax is None :
+            ax = matplotlib_pyplot.gca()
 
-
-    def text( self, point, message, **kwargs ) :
-
-        matplotlib_pyplot.text( *tuple( self.project_on_screen( point ) ), s = message, **kwargs )
+        ax.add_collection( PatchCollection( [ Polygon( self.project_on_screen( points ) ) ], *args, **kwargs ) )
 
 
-    def show_reference_frame( self, color = 'black', axes_names = { 'x':'x', 'y':'y', 'z':'z' }, with_arrows = False, **kwargs ) :
+    def text( self, point, message, ax = None, **kwargs ) :
 
-        for xyz in self.reference_frame['direction'] :
+        if ax is None :
+            ax = matplotlib_pyplot.gca()
 
-            self.plot_points( np.array( [ self.reference_frame['center'], self.reference_frame['center'] + self.reference_frame['direction'][ xyz ] ] ), color = color, **kwargs )
-            self.text(  self.reference_frame['center'] + 1.4*self.reference_frame['direction'][ xyz ], axes_names[xyz], color = color, ha = 'center', va = 'center' )
+        ax.text( *tuple( self.project_on_screen( point ) ), s = message, **kwargs )
 
-    def show_plummet( self, color = 'lightgrey' ) :
 
-        self.plot_points([self.reference_frame['center'],self.reference_frame['center']+self.plummet],color=color)
-        self.plot_points([self.reference_frame['center']+self.plummet],color=color,marker='d', ms = 5)
+    def show_reference_frame( self, color = 'black', axes_names = { 'x':'x', 'y':'y', 'z':'z' }, with_arrows = True, ax = None, adjust_ax_lims = True, text_pad = .15, **kwargs ) :
+
+        if ax is None :
+            ax = matplotlib_pyplot.gca()
+
+        for xyz, direction in self.reference_frame['direction'].items() :
+
+            xy = self.project_on_screen( self.reference_frame['center'] )
+            xytext = self.project_on_screen( self.reference_frame['center'] + direction )
+
+            try :
+                direction_proj = self.project_on_screen(direction)/np_norm( self.project_on_screen(direction) )
+            except :
+                direction_proj = np.array([-1,-1])/sqrt(2)
+
+            xytext_wp = xytext + text_pad*direction_proj
+
+            if with_arrows :
+
+                if adjust_ax_lims :
+                    ax.plot( *np.array([ xy, xytext_wp ]).T, linestyle = 'none')# ), marker = 'o', color = 'red', alpha = .1 )
+
+                ax.annotate(
+                    s = '', #axes_names[xyz],
+                    xy = xy,
+                    xytext = xytext,
+                    arrowprops = dict( arrowstyle = '<-', shrinkB = 0, shrinkA = 0 ),
+                    annotation_clip = False,
+                    ha = 'center', va = 'center'
+                    )
+            else :
+                self.plot_points( np.array( [ xy, xytext ] ), color = color, **kwargs )
+
+            ax.text( *xytext_wp, axes_names[xyz], color = color, ha = 'center', va = 'center' )
+
+    def show_plummet( self, color = 'lightgrey', scale = .7 ) :
+
+        self.plot_points([self.reference_frame['center'],self.reference_frame['center']+scale*self.plummet],color=color)
+        self.plot_points([self.reference_frame['center']+scale*self.plummet],color=color,marker='d', ms = 5)
 
     def plot_subspace_ref( self, subspace, color = 'tab:red' ) :
 
@@ -268,11 +309,11 @@ if __name__ == '__main__':
     projected_square = ref_square.import_points( the_square)
     projected_barycenter = np.mean( projected_square, axis = 0 )
 
-    vp.plot_points( the_square, 'o', color = 'C1' )
+    vp.plot_points( the_square, marker = 'o', color = 'C1' )
     vp.plot_points( translate( the_square, array([0,-.5,0]) ), 'o', color = 'C4'  )
     vp.plot_patch( the_square, color = 'C2', alpha = .1 )
 
-    vp.plot_points( ref_square.export_points( [ projected_barycenter ] ), 'tab:red', marker = '+'  )
+    vp.plot_points( ref_square.export_points( [ projected_barycenter ] ), color = 'tab:red', marker = '+'  )
 
     matplotlib_pyplot.axis('equal')
     matplotlib_pyplot.show()

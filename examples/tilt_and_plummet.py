@@ -12,7 +12,7 @@ for tilt_angle in tilt_angles :
 
     # create viewpoint with tilt
 
-    viewpoint = pt.viewpoint( latitude = 0.9*pi/2., longitude = pi/10., plummet = [ 0,-sin(tilt_angle), -cos(tilt_angle) ] )
+    viewpoint = pt.viewpoint( latitude = 0.9*pi/2., longitude = pi/10., plummet = [ 0, -sin(tilt_angle), -cos(tilt_angle) ] )
 
     # translate reference frame
 
