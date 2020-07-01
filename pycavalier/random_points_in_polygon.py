@@ -60,7 +60,7 @@ def random_points_in_polygon( polygon, density, rand2d = rand2d ) :
     npts = number_of_points( density, rectangle )
 
     if npts < 10 :
-        print 'Warning random_points_in_polygon: total number of random points =', npts
+        print('Warning random_points_in_polygon: total number of random points =', npts)
 
     cloud = rand2d( npts, rectangle = rectangle )
 
@@ -78,7 +78,7 @@ if __name__ == '__main__' :
 
     cloud =  array( random_points_in_polygon( polygon, 10 ) )
 
-    print cloud
+    print( cloud )
 
     plot( cloud[:,0], cloud[:,1], '.' )
     plot( polygon[:,0], polygon[:,1] )

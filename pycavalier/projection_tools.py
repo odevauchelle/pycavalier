@@ -31,7 +31,7 @@ import matplotlib.pyplot as matplotlib_pyplot
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
 
-from random_points_in_polygon import random_points_in_polygon
+from .random_points_in_polygon import random_points_in_polygon
 
 def projector( point, n_X, n_Y ) :
     return np.array( [ np.dot( point, n_X ), np.dot( point, n_Y ) ] )
@@ -81,7 +81,7 @@ class viewpoint :
 
         if len( np.shape( points ) ) == 2 :
 
-            return np.array( map( lambda point : projector( point, self.n_X, self.n_Y ), points ) )
+            return np.array( list( map( lambda point : projector( point, self.n_X, self.n_Y ), points ) ) )
 
         elif np.shape( points ) == (3,) :
 
@@ -162,7 +162,7 @@ class subspace_2D :
         List of projected points
         '''
 
-        return np.array( map( lambda point: projector( point - self.origin, *( self.base ) ), points ) )
+        return np.array( list( map( lambda point: projector( point - self.origin, *( self.base ) ), points ) ) )
 
     def export_points( self, points ) :
         '''
@@ -177,7 +177,7 @@ class subspace_2D :
         List of corresponding points in the 3D space.
         '''
 
-        return np.array( map( lambda point: self.origin + self.base[0]*point[0] + self.base[1]*point[1], points ) )
+        return np.array( list( map( lambda point: self.origin + self.base[0]*point[0] + self.base[1]*point[1], points ) ) )
 
 
 #########################
@@ -194,7 +194,7 @@ def dotify( the_polygon, density ) :
     return list( ref2D.export_points( random_points_in_polygon( the_polygon_2D, density ) ) )
 
 def get_segments( points ) :
-    return map( transpose, array( [ points[1:].T, points[:-1].T ] ).T )
+    return list( map( transpose, array( [ points[1:].T, points[:-1].T ] ).T ) )
 
 def flat_arrow( arrow_center, arrow_length, arrow_width ) :
 
@@ -227,7 +227,7 @@ def length_arrow(vp, points, bar_shift, label, va = 'center', ha = 'center', rel
     vp.text( np.mean( points, axis = 0 ) + relative_text_pos*bar_shift, label, color = color, va = va, ha = ha )
 
 def translate( list_of_points, vector ) :
-    return map( lambda x: np.array(x) + vector, list_of_points )
+    return list( map( lambda x: np.array(x) + vector, list_of_points ) )
 
 #####################
 #
