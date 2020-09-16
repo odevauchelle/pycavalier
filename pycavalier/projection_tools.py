@@ -164,6 +164,9 @@ class viewpoint :
         for n in subspace.base :
             self.plot_points( [subspace.origin, subspace.origin + n ], color = color )
 
+    def length_arrow( self, **kwargs ) :
+        length_arrow( self, **kwargs )
+
 class subspace_2D :
     '''
     A 2D plane in 3D space.
@@ -252,7 +255,10 @@ def flat_arrow( arrow_center, arrow_length, arrow_width ) :
 
     return arrow - np.mean( arrow, axis = 0 ) + arrow_center
 
-def length_arrow(vp, points, bar_shift, label, va = 'center', ha = 'center', relative_arrow_pos = 0.75, relative_text_pos = 1.25, show_bounds = True, color = 'k' ) :
+def length_arrow( vp, points, bar_shift = None, label = '', va = 'center', ha = 'center', relative_arrow_pos = 0.75, relative_text_pos = 1.25, show_bounds = True, color = 'k', bar_linestyle = '--' ) :
+
+    if bar_shift is None :
+        bar_shift = np.array([0]*3)
 
     points_arrow = points + relative_arrow_pos*bar_shift
 
@@ -263,7 +269,7 @@ def length_arrow(vp, points, bar_shift, label, va = 'center', ha = 'center', rel
 
     if show_bounds :
         for tip in points :
-            vp.plot_points( [ tip, tip + bar_shift ], color = st.legend_color, linestyle = '--', dashes = dashes )
+            vp.plot_points( [ tip, tip + bar_shift ], color = color, linestyle = bar_linestyle )
 
     vp.text( np.mean( points, axis = 0 ) + relative_text_pos*bar_shift, label, color = color, va = va, ha = ha )
 
