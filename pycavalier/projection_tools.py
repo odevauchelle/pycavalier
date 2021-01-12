@@ -117,15 +117,18 @@ class viewpoint :
         ax.text( *tuple( self.project_on_screen( point ) ), s = message, **kwargs )
 
 
-    def show_reference_frame( self, color = 'black', axes_names = { 'x':'x', 'y':'y', 'z':'z' }, with_arrows = True, ax = None, adjust_ax_lims = True, text_pad = .15, **kwargs ) :
+    def show_reference_frame( self, center = None, color = 'black', axes_names = { 'x':'x', 'y':'y', 'z':'z' }, with_arrows = True, ax = None, adjust_ax_lims = True, text_pad = .15, **kwargs ) :
+
+        if center is None :
+            center = self.reference_frame['center']
 
         if ax is None :
             ax = matplotlib_pyplot.gca()
 
         for xyz, direction in self.reference_frame['direction'].items() :
 
-            xy = self.project_on_screen( self.reference_frame['center'] )
-            xytext = self.project_on_screen( self.reference_frame['center'] + direction )
+            xy = self.project_on_screen( center )
+            xytext = self.project_on_screen( center + direction )
 
             try :
                 direction_proj = self.project_on_screen(direction)/np_norm( self.project_on_screen(direction) )
@@ -152,10 +155,13 @@ class viewpoint :
 
             ax.text( *xytext_wp, axes_names[xyz], color = color, ha = 'center', va = 'center' )
 
-    def show_plummet( self, color = 'lightgrey', scale = .7 ) :
+    def show_plummet( self, center = None, color = 'lightgrey', scale = .7 ) :
 
-        self.plot_points([self.reference_frame['center'],self.reference_frame['center']+scale*self.plummet],color=color)
-        self.plot_points([self.reference_frame['center']+scale*self.plummet],color=color,marker='d', ms = 5)
+        if center is None :
+            center = self.reference_frame['center']
+
+        self.plot_points([center,center+scale*self.plummet],color=color)
+        self.plot_points([center+scale*self.plummet],color=color,marker='d', ms = 5)
 
     def plot_subspace_ref( self, subspace, color = 'tab:red' ) :
 
