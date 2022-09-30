@@ -53,7 +53,7 @@ class viewpoint :
     A projection frame, oriented with respect to the viewer.
     '''
 
-    def __init__( self, latitude, longitude, plummet = ( 0, 0, -1 ), reference_frame = default_reference_frame ) :
+    def __init__( self, latitude = np.pi/2, longitude = 0, plummet = ( 0, 0, -1 ), reference_frame = default_reference_frame ) :
         '''
         Create a projection frame.
 
