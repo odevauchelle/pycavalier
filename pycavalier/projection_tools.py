@@ -143,7 +143,7 @@ class viewpoint :
                     ax.plot( *np.array([ xy, xytext_wp ]).T, linestyle = 'none')# ), marker = 'o', color = 'red', alpha = .1 )
 
                 ax.annotate(
-                    s = '', #axes_names[xyz],
+                    '', #axes_names[xyz], option name: 's' or 'text', depending on the Matplotlib version (thanks to E. Lajeunesse)
                     xy = xy,
                     xytext = xytext,
                     arrowprops = dict( arrowstyle = '<-', shrinkB = 0, shrinkA = 0 ),
