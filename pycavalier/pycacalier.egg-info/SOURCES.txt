@@ -1,7 +1,0 @@
-setup.py
-pycacalier.egg-info/PKG-INFO
-pycacalier.egg-info/SOURCES.txt
-pycacalier.egg-info/dependency_links.txt
-pycacalier.egg-info/not-zip-safe
-pycacalier.egg-info/requires.txt
-pycacalier.egg-info/top_level.txt
