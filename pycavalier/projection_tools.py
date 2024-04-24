@@ -30,6 +30,7 @@ from numpy.linalg import norm as np_norm
 import matplotlib.pyplot as matplotlib_pyplot
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection
+from scipy.spatial.transform import Rotation
 
 if __name__ == '__main__' :
     from random_points_in_polygon import random_points_in_polygon
@@ -281,6 +282,13 @@ def length_arrow( vp, points, bar_shift = None, label = '', va = 'center', ha = 
 
 def translate( list_of_points, vector ) :
     return list( map( lambda x: np.array(x) + vector, list_of_points ) )
+
+def rotate( list_of_points, vector, angle ) :
+    r = Rotation.from_rotvec( angle*np.array( vector ) )
+    return [ r.as_matrix()@x for x in list_of_points ]
+
+
+
 
 #####################
 #
