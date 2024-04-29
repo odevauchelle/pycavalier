@@ -118,7 +118,7 @@ class viewpoint :
         ax.text( *tuple( self.project_on_screen( point ) ), s = message, **kwargs )
 
 
-    def show_reference_frame( self, center = None, color = 'black', axes_names = { 'x':'x', 'y':'y', 'z':'z' }, with_arrows = True, ax = None, adjust_ax_lims = True, text_pad = .15, **kwargs ) :
+    def show_reference_frame( self, center = None, color = 'black', axes_names = { 'x':'x', 'y':'y', 'z':'z' }, with_arrows = True, ax = None, adjust_ax_lims = True, text_pad = .15, length = 1, **kwargs ) :
 
         if center is None :
             center = self.reference_frame['center']
@@ -129,7 +129,7 @@ class viewpoint :
         for xyz, direction in self.reference_frame['direction'].items() :
 
             xy = self.project_on_screen( center )
-            xytext = self.project_on_screen( center + direction )
+            xytext = self.project_on_screen( center + direction*length )
 
             try :
                 direction_proj = self.project_on_screen(direction)/np_norm( self.project_on_screen(direction) )
@@ -147,7 +147,7 @@ class viewpoint :
                     '', #axes_names[xyz], option name: 's' or 'text', depending on the Matplotlib version (thanks to E. Lajeunesse)
                     xy = xy,
                     xytext = xytext,
-                    arrowprops = dict( arrowstyle = '<-', shrinkB = 0, shrinkA = 0 ),
+                    arrowprops = dict( arrowstyle = '<-', shrinkB = 0, shrinkA = text_pad ),
                     annotation_clip = False,
                     ha = 'center', va = 'center'
                     )
