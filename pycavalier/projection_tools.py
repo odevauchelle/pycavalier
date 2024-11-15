@@ -2,11 +2,13 @@
 Pycavalier projection tools
 """
 
-import numpy as np
-from numpy.linalg import norm as np_norm
 import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
+import numpy as np
 from matplotlib.collections import PatchCollection
+from matplotlib.patches import Polygon
+from numpy.linalg import norm as np_norm
+from scipy.spatial.transform import Rotation
+
 from pycavalier.random_points_in_polygon import random_points_in_polygon
 
 
@@ -15,22 +17,22 @@ def projector(point, n_X, n_Y):
 
 
 default_reference_frame = {
-    'center': np.array([0, 0, 0]),
-    'direction': {
-        'x': np.array([1, 0, 0]),
-        'y': np.array([0, 1, 0]),
-        'z': np.array([0, 0, 1])
+    "center": np.array([0, 0, 0]),
+    "direction": {
+        "x": np.array([1, 0, 0]),
+        "y": np.array([0, 1, 0]),
+        "z": np.array([0, 0, 1])
     }
 }
 
 
 class viewpoint:
-    '''
+    """
     A projection frame, oriented with respect to the viewer.
-    '''
+    """
 
     def __init__(self, latitude, longitude, plummet=(0, 0, -1), reference_frame=default_reference_frame):
-        '''
+        """
         Create a projection frame.
 
         Parameters
@@ -42,7 +44,7 @@ class viewpoint:
         plummet : tuple of length 3, optional
             Defines the vertical direction.
         reference_frame : Frame dictionary, optional
-        '''
+        """
 
         self.latitude = latitude
         self.longitude = longitude
@@ -92,30 +94,18 @@ class viewpoint:
 
         ax.text(*tuple(self.project_on_screen(point)), s=message, **kwargs)
 
-    def show_reference_frame(self,
-                             center=None,
-                             color='black',
-                             axes_names={
-                                 'x': 'x',
-                                 'y': 'y',
-                                 'z': 'z'
-                             },
-                             with_arrows=True,
-                             ax=None,
-                             adjust_ax_lims=True,
-                             text_pad=.15,
-                             **kwargs):
+    def show_reference_frame( self, center = None, color = "black", axes_names = { "x":"x", "y":"y", "z":"z" }, with_arrows = True, ax = None, adjust_ax_lims = True, text_pad = .15, length = 1, **kwargs ) :
 
         if center is None:
-            center = self.reference_frame['center']
+            center = self.reference_frame["center"]
 
         if ax is None:
             ax = plt.gca()
 
-        for xyz, direction in self.reference_frame['direction'].items():
+        for xyz, direction in self.reference_frame["direction"].items():
 
-            xy = self.project_on_screen(center)
-            xytext = self.project_on_screen(center + direction)
+            xy = self.project_on_screen( center )
+            xytext = self.project_on_screen( center + direction*length )
 
             try:
                 direction_proj = self.project_on_screen(direction) / np_norm(self.project_on_screen(direction))
@@ -128,32 +118,32 @@ class viewpoint:
 
                 if adjust_ax_lims:
                     ax.plot(*np.array([xy, xytext_wp]).T,
-                            linestyle='none')  # ), marker = 'o', color = 'red', alpha = .1 )
+                            linestyle="none")  # ), marker = 'o', color = 'red', alpha = .1 )
 
                 ax.annotate(
-                    text='',  # axes_names[xyz],
-                    xy=xy,
-                    xytext=xytext,
-                    arrowprops=dict(arrowstyle='<-', shrinkB=0, shrinkA=0),
-                    annotation_clip=False,
-                    ha='center',
-                    va='center')
-            else:
-                self.plot_points(np.array([xy, xytext]), color=color, **kwargs)
+                    "", #axes_names[xyz], option name: 's' or 'text', depending on the Matplotlib version (thanks to E. Lajeunesse)
+                    xy = xy,
+                    xytext = xytext,
+                    arrowprops = dict( arrowstyle = "<-", shrinkB = 0, shrinkA = text_pad ),
+                    annotation_clip = False,
+                    ha = "center", va = "center"
+                    )
+            else :
+                self.plot_points( np.array( [ xy, xytext ] ), color = color, **kwargs )
 
-            ax.text(*xytext_wp, axes_names[xyz], color=color, ha='center', va='center')
+            ax.text(*xytext_wp, axes_names[xyz], color=color, ha="center", va="center")
 
-    def show_plummet(self, center=None, color='lightgrey', scale=.7):
+    def show_plummet(self, center=None, color="lightgrey", scale=.7):
 
         if center is None:
-            center = self.reference_frame['center']
+            center = self.reference_frame["center"]
 
         self.plot_points([center, center + scale * self.plummet], color=color)
-        self.plot_points([center + scale * self.plummet], color=color, marker='d', ms=5)
+        self.plot_points([center + scale * self.plummet], color=color, marker="d", ms=5)
 
-    def plot_subspace_ref(self, subspace, color='tab:red'):
+    def plot_subspace_ref(self, subspace, color="tab:red"):
 
-        self.plot_points([subspace.origin], color=color, marker='o')
+        self.plot_points([subspace.origin], color=color, marker="o")
 
         for n in subspace.base:
             self.plot_points([subspace.origin, subspace.origin + n], color=color)
@@ -163,17 +153,17 @@ class viewpoint:
 
 
 class subspace_2D:
-    '''
+    """
     A 2D plane in 3D space.
-    '''
+    """
 
     def __init__(self, points):
-        '''
+        """
         Parameters
         ----------
         points: list of three points
             These points define the plane. Only the three first elements of the list are used.
-        '''
+        """
 
         self.origin = points[1]
 
@@ -189,7 +179,7 @@ class subspace_2D:
         self.base = n1, n2
 
     def import_points(self, points):
-        '''
+        """
         Projects 3D points onto the 2D subspace.
 
         Parameters
@@ -199,12 +189,12 @@ class subspace_2D:
         Returns
         ----------
         List of projected points
-        '''
+        """
 
         return np.array(list(map(lambda point: projector(point - self.origin, *(self.base)), points)))
 
     def export_points(self, points):
-        '''
+        """
         Converts points in the subspace to points of the 3D space.
 
         Parameters
@@ -214,7 +204,7 @@ class subspace_2D:
         Returns
         ----------
         List of corresponding points in the 3D space.
-        '''
+        """
 
         return np.array(list(map(lambda point: self.origin + self.base[0] * point[0] + self.base[1] * point[1],
                                  points)))
@@ -252,39 +242,35 @@ def flat_arrow(arrow_center, arrow_length, arrow_width):
     return arrow - np.mean(arrow, axis=0) + arrow_center
 
 
-def length_arrow(vp,
-                 points,
-                 bar_shift=None,
-                 label='',
-                 va='center',
-                 ha='center',
-                 relative_arrow_pos=0.75,
-                 relative_text_pos=1.25,
-                 show_bounds=True,
-                 color='k',
-                 bar_linestyle='--'):
+def length_arrow( vp, points, bar_shift = None, label = "", va = "center", ha = "center", relative_arrow_pos = 0.75, relative_text_pos = 1.25, show_bounds = True, color = "k", bar_linestyle = "--", ax = None ) :
+
+    if ax is None :
+        ax = plt.gca()
 
     if bar_shift is None:
         bar_shift = np.array([0] * 3)
 
     points_arrow = points + relative_arrow_pos*bar_shift
 
-    plt.annotate('',
-                 xy=vp.project_on_screen(points_arrow[0]),
-                 xycoords='data',
-                 xytext=vp.project_on_screen(points_arrow[1]),
-                 textcoords='data',
-                 arrowprops={'arrowstyle': '<->'})
+    ax.annotate(
+        "", xy=vp.project_on_screen(points_arrow[0]), xycoords="data",
+        xytext=vp.project_on_screen(points_arrow[1]), textcoords="data",
+        arrowprops={"arrowstyle": "<->"} )
 
-    if show_bounds:
-        for tip in points:
-            vp.plot_points([tip, tip + bar_shift], color=color, linestyle=bar_linestyle)
+    if show_bounds :
+        for tip in points :
+            vp.plot_points( [ tip, tip + bar_shift ], color = color, linestyle = bar_linestyle, ax = ax )
 
-    vp.text(np.mean(points, axis=0) + relative_text_pos*bar_shift, label, color=color, va=va, ha=ha)
+    vp.text( np.mean( points, axis = 0 ) + relative_text_pos*bar_shift, label, color = color, va = va, ha = ha, ax = ax )
+
+def translate( list_of_points, vector ) :
+    return list( map( lambda x: np.array(x) + vector, list_of_points ) )
+
+def rotate( list_of_points, vector, angle ) :
+    r = Rotation.from_rotvec( angle*np.array( vector ) )
+    return [ r.as_matrix()@x for x in list_of_points ]
 
 
-def translate(list_of_points, vector):
-    return list(map(lambda x: np.array(x) + vector, list_of_points))
 
 
 #####################
@@ -293,7 +279,7 @@ def translate(list_of_points, vector):
 #
 #####################
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     latitude = 0.8 * np.pi / 2.
     longitude = -.1 * np.pi / 2
@@ -329,11 +315,11 @@ if __name__ == '__main__':
     projected_square = ref_square.import_points(the_square)
     projected_barycenter = np.mean(projected_square, axis=0)
 
-    vp.plot_points(the_square, marker='o', color='C1')
-    vp.plot_points(translate(the_square, np.array([0, -.5, 0])), 'o', color='C4')
-    vp.plot_patch(the_square, color='C2', alpha=.1)
+    vp.plot_points(the_square, marker="o", color="C1")
+    vp.plot_points(translate(the_square, np.array([0, -.5, 0])), "o", color="C4")
+    vp.plot_patch(the_square, color="C2", alpha=.1)
 
-    vp.plot_points(ref_square.export_points([projected_barycenter]), color='tab:red', marker='+')
+    vp.plot_points(ref_square.export_points([projected_barycenter]), color="tab:red", marker="+")
 
-    plt.axis('equal')
+    plt.axis("equal")
     plt.show()
