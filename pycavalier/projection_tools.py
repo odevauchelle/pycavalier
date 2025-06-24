@@ -171,8 +171,8 @@ class viewpoint :
         for n in subspace.base :
             self.plot_points( [subspace.origin, subspace.origin + n ], color = color )
 
-    def length_arrow( self, **kwargs ) :
-        length_arrow( self, **kwargs )
+    def length_arrow( self, *args, **kwargs ) :
+        length_arrow( self, *args, **kwargs )
 
 class subspace_2D :
     '''
@@ -245,7 +245,7 @@ def dotify( the_polygon, density ) :
     return list( ref2D.export_points( random_points_in_polygon( the_polygon_2D, density ) ) )
 
 def get_segments( points ) :
-    return list( map( transpose, array( [ points[1:].T, points[:-1].T ] ).T ) )
+    return list( map( np.transpose, np.array( [ points[1:].T, points[:-1].T ] ).T ) )
 
 def flat_arrow( arrow_center, arrow_length, arrow_width ) :
 
